@@ -5,6 +5,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
+    useLibrary 'org.apache.http.legacy'
     compileSdkVersion compile_sdk_version
     defaultConfig {
         applicationId "com.ccm.im"
@@ -13,6 +14,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86'
+        }
     }
     buildTypes {
         release {
@@ -20,11 +24,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation "com.android.support:appcompat-v7:$support_version"
     implementation "com.android.support:cardview-v7:$support_version"
@@ -38,7 +47,18 @@ dependencies {
     implementation "org.jetbrains.anko:anko-sqlite:$anko_version"//Anko sqlite库
 
 
-    implementation ('com.roughike:bottom-bar:2.3.1'){
+    implementation('com.roughike:bottom-bar:2.3.1') {
         exclude module: 'design'
     }
+    implementation 'com.github.jiyouliang2:SmartUpdateDemo:1.0.1'
+
+    //阿里热修复框架
+    implementation 'com.alipay.euler:andfix:0.5.0@aar'
+    //bmob
+    implementation 'cn.bmob.android:bmob-sdk:3.7.3-rc1'
+    implementation "io.reactivex.rxjava2:rxjava:2.2.10"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'com.squareup.okio:okio:2.1.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.3'
 }

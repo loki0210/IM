@@ -17,6 +17,9 @@ class LoginActivity : BaseActivity(), LoginContract.View {
         login.setOnClickListener {
             loginIn()
         }
+        btn_register.setOnClickListener {
+            startActivity<RegisterActivity>()
+        }
         password.setOnEditorActionListener { _, _, _ ->
             loginIn()
             true

@@ -44,12 +44,18 @@ class RegisterActivity : BaseActivity(), RegisterContract.View {
 
     override fun onRegisterSuccess() {
         dismissProgress()
+        toast(R.string.register_success)
         finish()
     }
 
     override fun onRegisterFailed() {
         dismissProgress()
         toast("注册失败")
+    }
+
+    override fun onUserExist() {
+        dismissProgress()
+        toast(R.string.user_exist)
     }
 
     override fun getLayoutResId(): Int = R.layout.activity_register

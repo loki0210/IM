@@ -6,6 +6,9 @@ import cn.bmob.v3.listener.SaveListener
 import com.ccm.im.contract.RegisterContract
 import com.ccm.im.extentions.isValidPassword
 import com.ccm.im.extentions.isValidUserName
+import com.hyphenate.chat.EMClient
+import com.hyphenate.exceptions.HyphenateException
+import org.jetbrains.anko.doAsync
 
 class RegisterPresenter(val view: RegisterContract.View) : RegisterContract.Presenter {
     override fun register(username: String, password: String, confirmPassword: String) {
@@ -24,11 +27,33 @@ class RegisterPresenter(val view: RegisterContract.View) : RegisterContract.Pres
         bu.username = username
         bu.setPassword(password)
         bu.signUp<BmobUser>(object : SaveListener<BmobUser>() {
-            override fun done(p0: BmobUser?, p1: BmobException?) {
+            override fun done(p0: BmobUser, p1: BmobException?) {
                 if (p1 == null) {
-
-                } else view.onRegisterFailed()
+                    //注册到环信
+                    registerEaseMob(username, password)
+                } else {
+                    if (p1.errorCode == 202) view.onUserExist()
+                    else view.onRegisterFailed()
+                }
             }
         })
+    }
+
+    private fun registerEaseMob(username: String, password: String) {
+        doAsync {
+            try {
+                //注册失败会出现HyphenateException
+                EMClient.getInstance().createAccount(username, password)
+                //子线程到主线程
+                uiThread {
+                    view.onRegisterSuccess()
+                }
+            } catch (e: HyphenateException) {
+                uiThread {
+
+                    view.onRegisterFailed()
+                }
+            }
+        }
     }
 }
